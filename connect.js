@@ -1,7 +1,7 @@
 const mysql = require('mysql');
 const express = require('express');
-const app = express();
-const router = express.Router();
+const app = express();                 //搭建web服务器
+const router = express.Router();   //对应框架中的路由
 
 // 解析参数
 const bodyParser = require('body-parser');

@@ -6,7 +6,8 @@ const userSQL = {
     updateUser: 'update user set ? where username=?',// 更新用户信息
     deleteUser: 'delete from user where username=?' ,// 删除用户
 
-    queryAllGoods:'select * from hotel', // 查询所有酒店信息
+    queryAllHotels:'select * from hotel', // 查询所有酒店信息
+    queryByHotelName:'select * from  hotel where hname=?',
 
 };
 

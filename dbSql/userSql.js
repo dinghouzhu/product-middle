@@ -7,7 +7,10 @@ const userSQL = {
     deleteUser: 'delete from user where username=?' ,// 删除用户
 
     queryAllHotels:'select * from hotel', // 查询所有酒店信息
-    queryByHotelName:'select * from  hotel where hname=?',
+    queryByHotelName:'select * from  hotel where hname=?', //查询指定酒店信息
+
+    queryAllRooms:'select * from room', // 查询所有酒店信息
+
 
 };
 

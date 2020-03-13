@@ -1,6 +1,7 @@
 const { app, pool } =require('./connect');
 const user = require('./router/user');
 const hotel=require('./router/hotel');
+const room=require('./router/room')
 // const cors = require('cors');
 // app.use(cors); // 解决跨域
 app.all('*', (req, res, next) => {
@@ -35,6 +36,7 @@ app.get('/', (req,res) => {  //首页路由
 */
 app.use('/user', user);
 app.use('/hotel', hotel);
+app.use('/room', room);
 app.listen(8080, () => {
     console.log('服务启动','localhost:8080')
 });

@@ -1,5 +1,6 @@
 const userSQL = {
     queryAll: 'select * from user',   // 查询所有用户
+
     queryByName: 'select * from  user where username=?',  // 通过用户名索引查询用户
     queryByNamePassword: 'select * from  user where username=? and password=?',  // 通过用户名和密码索引查询用户
     insert: 'insert into user set ? ',  // 插入新用户
@@ -8,6 +9,7 @@ const userSQL = {
 
     queryAllHotels:'select * from hotel', // 查询所有酒店信息
     queryByHotelName:'select * from  hotel where hname=?', //查询指定酒店信息
+    InsertHotel:'insert into hotel set ? ', //插入新酒店信息
 
     queryAllRooms:'select * from room', // 查询所有酒店信息
 

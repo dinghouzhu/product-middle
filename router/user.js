@@ -31,6 +31,7 @@ router.post('/login', (req, res) => {
             };
             //通过用户名和密码索引查询数据，有数据说明用户存在且密码正确，只能返回登录成功，否则返回用户名不存在或登录密码错误
             if (result && result.length) {
+
                 _data = {
                     msg: '登录成功',
                     data: {
@@ -362,69 +363,41 @@ router.post('/searchUser', (req, res) => {
     })
 });
 
-/*模糊查询用户接口   暂未完成*/
+/*模糊查询用户接口*/
 router.post('/searchUsers', (req, res) => {
-    // 获取前台页面传过来的参数
-    let user = {
-        username: req.query.username
-    };
+    let username = req.query.username;
+    let _data;
     let _res = res;
     // 判断参数是否为空
-    if (!user.username) {
+    if (!username) {
         return resJson(_res, {
             code: -1,
             msg: '用户名不能为空'
         })
     }
-    let _data;
-    // 整合参数
-    // 从连接池获取连接
-    pool.getConnection((err, conn) => {
-        // 查询数据库该用户是否已存在
-        conn.query(userSQL.queryByName, user.username, (e, r) => {
-            if (e) _data = {
-                code: -1,
-                msg: e
-            };
-            if (r) {
-                //判断用户列表是否为空
-                if (r.length) {
-                    //如不为空，则说明存在此用户
-                    conn.query(userSQL.queryByName, user.username, (err, result) => {
-                        if (err) _data = {
-                            code: -1,
-                            msg: e
-                        };
-                        if (result) {
-                            _data = {
-                                msg: '查询成功',
-                                data:{
-                                    username:user.username,
-                                    nickname:result[0].nickname,
-                                    sex:result[0].sex,
-                                    des:result[0].des,
-                                    age:result[0].age,
-                                    level:result[0].level,
-                                }
+    pool.query(`select * from user where username like '%${username}%'`, (err,result,fields)=>{
 
-                            }
-                        }
-                    })
-                } else {
-                    _data = {
-                        code: -1,
-                        msg: '用户不存在，查询失败'
-                    }
-                }
+        _data = {
+            msg: '查询成功',
+            data:{
+                result,
+                nickname:result.nickname,
+                sex:result.sex,
+                des:result.des,
+                age:result.age,
+                level:result.level,
             }
-            setTimeout(() => {
-                //把操作结果返回给前台页面
-                resJson(_res, _data)
-            }, 200);
-        });
-        pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
+
+        };
+        setTimeout(() => {
+            //把操作结果返回给前台页面
+            resJson(_res, _data)
+        }, 200);
+        pool.releaseConnection(pool) // 释放连接池，等待别的连接使用
     })
+
 });
+
 
 
 /*修改用户信息接口 */
@@ -503,5 +476,6 @@ router.post('/updateUser', (req, res) => {
         });
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
-})
+});
+
 module.exports=router;

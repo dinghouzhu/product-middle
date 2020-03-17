@@ -299,7 +299,7 @@ router.post('/userlist', (req, res) => {
 });
 
 
-//查询指定用户  目前只支持精确查找
+//查询指定用户  精确查找
 router.post('/searchUser', (req, res) => {
     // 获取前台页面传过来的参数
     let user = {
@@ -380,24 +380,18 @@ router.post('/searchUsers', (req, res) => {
         _data = {
             msg: '查询成功',
             data:{
-                result,
-                nickname:result.nickname,
-                sex:result.sex,
-                des:result.des,
-                age:result.age,
-                level:result.level,
+                result:result,
             }
 
         };
         setTimeout(() => {
             //把操作结果返回给前台页面
             resJson(_res, _data)
-        }, 200);
+        }, 100);
         pool.releaseConnection(pool) // 释放连接池，等待别的连接使用
     })
 
 });
-
 
 
 /*修改用户信息接口 */

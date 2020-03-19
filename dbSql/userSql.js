@@ -13,6 +13,9 @@ const userSQL = {
 
     queryAllRooms:'select * from room', // 查询所有酒店信息
 
+    queryOrderByName:'select * from orders where username=?',
+    orderInset:'insert into orders set ? ',  // 插入一条订单记录
+
 
 };
 

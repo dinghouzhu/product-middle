@@ -56,10 +56,7 @@ router.post('/login', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-
-/*
-*修改密码接口
-* */
+/*修改密码接口 */
 router.post('/updatePassword', (req, res) => {
     let user = {
         username: req.query.username,
@@ -136,7 +133,6 @@ router.post('/updatePassword', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-
 /* 注册用户接口*/
 router.post('/register', (req, res) => {
     // 获取前台页面传过来的参数
@@ -211,8 +207,6 @@ router.post('/register', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-
-
 //删除用户接口
 router.post('/deleteUser', (req, res) => {
     // 获取前台页面传过来的参数
@@ -267,8 +261,6 @@ router.post('/deleteUser', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-
-
 /* 查询所有用户*/
 router.post('/userlist', (req, res) => {
     let _res = res;
@@ -297,8 +289,6 @@ router.post('/userlist', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-
-
 //查询指定用户  精确查找
 router.post('/searchUser', (req, res) => {
     // 获取前台页面传过来的参数
@@ -362,7 +352,6 @@ router.post('/searchUser', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-
 /*模糊查询用户接口*/
 router.post('/searchUsers', (req, res) => {
     let username = req.query.username;
@@ -392,8 +381,6 @@ router.post('/searchUsers', (req, res) => {
     })
 
 });
-
-
 /*修改用户信息接口 */
 router.post('/updateUser', (req, res) => {
     let user = {

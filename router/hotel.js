@@ -1,9 +1,7 @@
 const { pool, router, resJson } = require('../connect');
 const userSQL = require('../dbSql/userSQL');
 
-/*
-* 查询所有酒店信息接口
-* */
+/* 查询所有酒店信息接口*/
 router.post('/hotel', (req, res) => {
     let _res = res;
     let _data;

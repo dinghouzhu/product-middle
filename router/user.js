@@ -1,5 +1,6 @@
 const { pool, router, resJson } = require('../connect');
 const userSQL = require('../dbSql/userSQL');
+const jwt=require('jsonwebtoken');
 /*
 * 登陆接口 */
 router.post('/login', (req, res) => {
@@ -31,7 +32,11 @@ router.post('/login', (req, res) => {
             };
             //通过用户名和密码索引查询数据，有数据说明用户存在且密码正确，只能返回登录成功，否则返回用户名不存在或登录密码错误
             if (result && result.length) {
-
+                let content ={username:req.body.username}; // 要生成token的主题信息
+                let secretOrPrivateKey="dhz"; // 这是加密的key（此处为锁  锁和钥匙同值）
+                let token = jwt.sign(content, secretOrPrivateKey, {
+                    expiresIn: 60*5*1  // 5分钟过期
+                });
                 _data = {
                     msg: '登录成功',
                     data: {
@@ -41,7 +46,8 @@ router.post('/login', (req, res) => {
                             sex:result[0].sex,
                             des:result[0].des,
                             age:result[0].age,
-                            level:result[0].level
+                            level:result[0].level,
+                            token:token
                         }
                     }
                 }
@@ -391,7 +397,6 @@ router.post('/updateUser', (req, res) => {
         habit: req.query.habit,
         sex: req.query.sex,
         age: req.query.age,
-
     };
     let _res = res;
     // 判断参数是否为空
@@ -411,50 +416,66 @@ router.post('/updateUser', (req, res) => {
     // 从连接池获取连接
     pool.getConnection((err, conn) => {
         // 查询数据库该用户是否已存在
-        conn.query(userSQL.queryByName, user.username, (e, r) => {
-            if (e) _data = {
-                code: -1,
-                msg: e
-            };
-            if (r) {
-                //判断用户列表是否为空
-                if (r.length) {
-                    //如不为空，则说明存在此用户且密码正确
-                    conn.query(userSQL.updateUser, [{
-                        username: user.username,
-                        password: user.password,
-                        nickname: user.nickname,
-                        des: user.des,
-                        habit: user.habit,
-                        sex: user.sex,
-                        age: user.age,
+        let secretOrPrivateKey="dhz"; // 这是加密的key（此处为钥匙  锁和钥匙同值）
+        let token=req.query.token;
+        jwt.verify(token,secretOrPrivateKey,function (err,decode) {
+            if (err){
+                _data = {
+                    code: -1,
+                    msg:'token验证失效'
+                };
+                resJson(_res, _data)
+            }else {
+                conn.query(userSQL.queryByName, user.username, (e, r) => {
+                    if (e) _data = {
+                        code: -1,
+                        msg: e
+                    };
+                    if (r) {
+                        //判断用户列表是否为空
+                        if (r.length) {
+                            //如不为空，则说明存在此用户且密码正确
 
-                    }, user.username], (err, result) => {
-                        console.log(err);
-                        if (result) {
-                            _data = {
-                                msg: '信息修改成功'
-                            }
+                            conn.query(userSQL.updateUser, [{
+                                username: user.username,
+                                password: user.password,
+                                nickname: user.nickname,
+                                des: user.des,
+                                habit: user.habit,
+                                sex: user.sex,
+                                age: user.age,
+                            }, user.username], (err, result) => {
+                                console.log(err);
+                                if (result) {
+                                    _data = {
+                                        msg: '信息修改成功'
+                                    }
+                                } else {
+                                    _data = {
+                                        code: -1,
+                                        msg: '信息修改失败',
+                                        err:err,
+                                        result:result
+                                    }
+                                }
+                            })
+
                         } else {
                             _data = {
                                 code: -1,
-                                msg: '信息修改失败'
+                                msg: '用户不存在或其他错误'
                             }
                         }
-                    })
-
-                } else {
-                    _data = {
-                        code: -1,
-                        msg: '用户不存在或其他错误'
                     }
-                }
+                    setTimeout(() => {
+                        //把操作结果返回给前台页面
+                        resJson(_res, _data)
+                    }, 200);
+                });
             }
-            setTimeout(() => {
-                //把操作结果返回给前台页面
-                resJson(_res, _data)
-            }, 200);
+
         });
+
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });

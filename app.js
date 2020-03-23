@@ -3,6 +3,7 @@ const user = require('./router/user');
 const hotel=require('./router/hotel');
 const room=require('./router/room');
 const order=require('./router/order');
+const authorizition=require('./utils/authMiddleware');
 
 // const cors = require('cors');
 // app.use(cors); // 解决跨域
@@ -36,6 +37,7 @@ app.get('/', (req,res) => {  //首页路由
     })
 });
 */
+//app.use(authorizition);
 app.use('/user', user);
 app.use('/hotel', hotel);
 app.use('/room', room);

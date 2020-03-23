@@ -35,7 +35,7 @@ router.post('/login', (req, res) => {
                 let content ={username:req.body.username}; // 要生成token的主题信息
                 let secretOrPrivateKey="dhz"; // 这是加密的key（此处为锁  锁和钥匙同值）
                 let token = jwt.sign(content, secretOrPrivateKey, {
-                    expiresIn: 60*5*1  // 5分钟过期
+                    expiresIn: 60*10*1  // 10分钟过期
                 });
                 _data = {
                     msg: '登录成功',
@@ -232,40 +232,54 @@ router.post('/deleteUser', (req, res) => {
     // 从连接池获取连接
     pool.getConnection((err, conn) => {
         // 查询数据库该用户是否已存在
-        conn.query(userSQL.queryByName, user.username, (e, r) => {
-            if (e) _data = {
-                code: -1,
-                msg: e
-            };
-            if (r) {
-                //判断用户列表是否为空
-                if (r.length) {
-                    //如不为空，则说明存在此用户
-                    conn.query(userSQL.deleteUser, user.username, (err, result) => {
-                        if (err) _data = {
-                            code: -1,
-                            msg: e
-                        };
-                        if (result) {
+        let secretOrPrivateKey="dhz"; // 这是加密的key（此处为钥匙  锁和钥匙同值）
+        let token=req.query.token;
+        jwt.verify(token,secretOrPrivateKey,function (err,decode) {
+            if (err){
+                _data = {
+                    code: -2,
+                    msg:'token验证失效',
+                };
+                resJson(_res, _data)
+            }else {
+                conn.query(userSQL.queryByName, user.username, (e, r) => {
+                    if (e) _data = {
+                        code: -1,
+                        msg: e
+                    };
+                    if (r) {
+                        //判断用户列表是否为空
+                        if (r.length) {
+                            //如不为空，则说明存在此用户
+                            conn.query(userSQL.deleteUser, user.username, (err, result) => {
+                                if (err) _data = {
+                                    code: -1,
+                                    msg: e
+                                };
+                                if (result) {
+                                    _data = {
+                                        code: 200,
+                                        msg: '删除用户操作成功'
+                                    }
+                                }
+                            })
+                        } else {
                             _data = {
-                                msg: '删除用户操作成功'
+                                code: -1,
+                                msg: '用户不存在，操作失败'
                             }
                         }
-                    })
-                } else {
-                    _data = {
-                        code: -1,
-                        msg: '用户不存在，操作失败'
                     }
-                }
+                    setTimeout(() => {
+                        //把操作结果返回给前台页面
+                        resJson(_res, _data)
+                    }, 200);
+                });
             }
-            setTimeout(() => {
-                //把操作结果返回给前台页面
-                resJson(_res, _data)
-            }, 200);
-        });
+            })
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
+
 });
 /* 查询所有用户*/
 router.post('/userlist', (req, res) => {
@@ -421,8 +435,8 @@ router.post('/updateUser', (req, res) => {
         jwt.verify(token,secretOrPrivateKey,function (err,decode) {
             if (err){
                 _data = {
-                    code: -1,
-                    msg:'token验证失效'
+                    code: -2,
+                    msg:'token验证失效',
                 };
                 resJson(_res, _data)
             }else {
@@ -435,7 +449,6 @@ router.post('/updateUser', (req, res) => {
                         //判断用户列表是否为空
                         if (r.length) {
                             //如不为空，则说明存在此用户且密码正确
-
                             conn.query(userSQL.updateUser, [{
                                 username: user.username,
                                 password: user.password,
@@ -448,7 +461,7 @@ router.post('/updateUser', (req, res) => {
                                 console.log(err);
                                 if (result) {
                                     _data = {
-                                        msg: '信息修改成功'
+                                        msg: '信息修改成功',
                                     }
                                 } else {
                                     _data = {

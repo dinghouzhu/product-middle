@@ -1,7 +1,8 @@
 const mysql = require('mysql');
 const express = require('express');
 const app = express();                 //搭建web服务器
-const router = express.Router();   //对应框架中的路由
+const router = express.Router();//对应框架中的路由
+
 
 // 解析参数
 const bodyParser = require('body-parser');
@@ -9,6 +10,8 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 // 表单请求
 app.use(bodyParser.urlencoded({extended: false}));
+app.use(express.static(__dirname + '/static')); //分发静态文件
+
 /**
  * 配置mysql
  */

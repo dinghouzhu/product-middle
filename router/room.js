@@ -1,6 +1,6 @@
 const { pool, router, resJson } = require('../connect');
 const userSQL = require('../dbSql/userSQL');
-/*查询所有价格*/
+/*查询所有房间*/
 router.post('/rooms', (req, res) => {
     let _res = res;
     let _data;

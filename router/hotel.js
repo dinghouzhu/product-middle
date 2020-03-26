@@ -34,7 +34,7 @@ router.post('/hotel', (req, res) => {
 router.post('/searchHotel', (req, res) => {
     // 获取前台页面传过来的参数
     let hotel = {
-        name: req.query.name
+        name: req.body.name
     };
     let _res = res;
     // 判断参数是否为空

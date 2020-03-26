@@ -1,8 +1,20 @@
 const { pool, router, resJson } = require('../connect');
 const userSQL = require('../dbSql/userSQL');
 const jwt=require('jsonwebtoken');
+router.post("/test",(req,res)=>{
+    let user={
+        username:req.body.username
+    };
+    res.json({
+        code:200,
+        data:{
+            msg:'success',
+            user:user
+        }
+    })
+});
 /*
-* 登陆接口 */
+* 登陆接口 完成*/
 router.post('/login', (req, res) => {
     let user = {
         username: req.body.username,
@@ -35,7 +47,7 @@ router.post('/login', (req, res) => {
                 let content ={username:req.body.username}; // 要生成token的主题信息
                 let secretOrPrivateKey="dhz"; // 这是加密的key（此处为锁  锁和钥匙同值）
                 let token = jwt.sign(content, secretOrPrivateKey, {
-                    expiresIn: 60*10*1  // 10分钟过期
+                    expiresIn: 60*15*1  // 15分钟过期
                 });
                 _data = {
                     msg: '登录成功',
@@ -62,13 +74,13 @@ router.post('/login', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-/*修改密码接口 */
+/*修改密码接口 完成*/
 router.post('/updatePassword', (req, res) => {
     let user = {
-        username: req.query.username,
-        oldPassword: req.query.oldPassword,
-        newPassword: req.query.newPassword,
-        againPassword: req.query.againPassword
+        username: req.body.username,
+        oldPassword: req.body.oldPassword,
+        newPassword: req.body.newPassword,
+        againPassword: req.body.againPassword
     };
     let _res = res;
     // 判断参数是否为空
@@ -139,18 +151,18 @@ router.post('/updatePassword', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-/* 注册用户接口*/
+/* 注册用户接口  完成*/
 router.post('/register', (req, res) => {
     // 获取前台页面传过来的参数
     let user = {
-        username: req.query.username,
-        password: req.query.password,
+        username: req.body.username,
+        password: req.body.password,
         //以下为非必须数据
-        nickname:req.query.nickname,
-        des:req.query.des,
-        habit:req.query.habit,
-        sex:req.query.sex,
-        age:req.query.age,
+        nickname:req.body.nickname,
+        des:req.body.des,
+        habit:req.body.habit,
+        sex:req.body.sex,
+        age:req.body.age,
         level:1                   //默认为1,除管理员外
     };
     let _res = res;
@@ -172,7 +184,17 @@ router.post('/register', (req, res) => {
 
     pool.getConnection((err, conn) => {
         // 查询数据库该用户是否已存在
-        conn.query(userSQL.queryByName, user.username, (e, r) => {
+        let secretOrPrivateKey="dhz"; // 这是加密的key（此处为钥匙  锁和钥匙同值）
+        let token=req.body.token;
+        jwt.verify(token,secretOrPrivateKey,function (err,decode) {
+            if (err){
+                _data = {
+                    code: -2,
+                    msg:'token验证失效',
+                };
+                resJson(_res, _data)
+            }else {
+         conn.query(userSQL.queryByName, user.username, (e, r) => {
             if (e) _data = {
                 code: -1,
                 msg: e
@@ -191,7 +213,10 @@ router.post('/register', (req, res) => {
                         if (result) {
                             _data = {
                                 code:200,
-                                msg: '注册成功'
+                                msg: '注册成功',
+                                data:{
+                                    result
+                                }
                             }
                         } else {
                             _data = {
@@ -209,15 +234,17 @@ router.post('/register', (req, res) => {
                 //把操作结果返回给前台页面
                 resJson(_res, _data)
             }, 200);
+          });
+         }
         });
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-//删除用户接口
+/*删除用户接口 完成*/
 router.post('/deleteUser', (req, res) => {
     // 获取前台页面传过来的参数
     let user = {
-        username: req.query.username
+        username: req.body.username
     };
     let _res = res;
     // 判断参数是否为空
@@ -233,7 +260,7 @@ router.post('/deleteUser', (req, res) => {
     pool.getConnection((err, conn) => {
         // 查询数据库该用户是否已存在
         let secretOrPrivateKey="dhz"; // 这是加密的key（此处为钥匙  锁和钥匙同值）
-        let token=req.query.token;
+        let token=req.body.token;
         jwt.verify(token,secretOrPrivateKey,function (err,decode) {
             if (err){
                 _data = {
@@ -276,12 +303,12 @@ router.post('/deleteUser', (req, res) => {
                     }, 200);
                 });
             }
-            })
+            });
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 
 });
-/* 查询所有用户*/
+/* 查询所有用户 完成*/
 router.post('/userlist', (req, res) => {
     let _res = res;
     let _data;
@@ -372,7 +399,7 @@ router.post('/searchUser', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-/*模糊查询用户接口*/
+/*模糊查询用户接口 完成*/
 router.post('/searchUsers', (req, res) => {
     let username = req.query.username;
     let _data;
@@ -401,16 +428,16 @@ router.post('/searchUsers', (req, res) => {
     })
 
 });
-/*修改用户信息接口 */
+/*修改用户信息接口 完成*/
 router.post('/updateUser', (req, res) => {
     let user = {
-        username: req.query.username,
-        password: req.query.password,
-        nickname: req.query.nickname,
-        des: req.query.des,
-        habit: req.query.habit,
-        sex: req.query.sex,
-        age: req.query.age,
+        username: req.body.username,
+        password: req.body.password,
+        nickname: req.body.nickname,
+        des: req.body.des,
+        habit: req.body.habit,
+        sex: req.body.sex,
+        age: req.body.age,
     };
     let _res = res;
     // 判断参数是否为空
@@ -431,7 +458,7 @@ router.post('/updateUser', (req, res) => {
     pool.getConnection((err, conn) => {
         // 查询数据库该用户是否已存在
         let secretOrPrivateKey="dhz"; // 这是加密的key（此处为钥匙  锁和钥匙同值）
-        let token=req.query.token;
+        let token=req.body.token;
         jwt.verify(token,secretOrPrivateKey,function (err,decode) {
             if (err){
                 _data = {

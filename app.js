@@ -5,6 +5,8 @@ const room=require('./router/room');
 const order=require('./router/order');
 const authorizition=require('./utils/authMiddleware');
 
+
+
 // const cors = require('cors');
 // app.use(cors); // 解决跨域
 app.all('*', (req, res, next) => {
@@ -23,12 +25,21 @@ app.get('/', (req,res) => {  //首页路由
     res.json({
         code:200,
         data:{
-            msg:'success'
+            msg:'get success'
         }
     })
 });
 
-
+app.post("/",function(req,res){
+    console.log(JSON.stringify(req.body));
+    res.json({
+        code:200,
+        data:{
+            msg:'post success'
+        }
+    });
+    res.end();
+});
 
 /*app.all('/', (req, res) => {
     pool.getConnection((err, conn) => {

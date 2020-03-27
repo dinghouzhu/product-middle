@@ -13,8 +13,8 @@ router.post("/test",(req,res)=>{
         }
     })
 });
-/*
-* 登陆接口 完成*/
+
+/* 登陆接口 完成*/
 router.post('/login', (req, res) => {
     let user = {
         username: req.body.username,
@@ -520,4 +520,42 @@ router.post('/updateUser', (req, res) => {
     })
 });
 
+
+/* 间隔验证接口 完成*/
+router.post('/again', (req, res) => {
+    let user = {
+        token:req.body.token
+    };
+    let _res = res;
+    // 判断参数是否为空
+    if (!user.token) {
+        return resJson(_res, {
+            code: -2,
+            msg: 'token为空'
+        })
+    }
+    // 从连接池获取连接
+    pool.getConnection((err, conn) => {
+        // 查询数据库该用户是否已存在
+        let secretOrPrivateKey="dhz"; // 这是加密的key（此处为钥匙  锁和钥匙同值）
+        let token=user.token;
+        jwt.verify(token,secretOrPrivateKey,function (err,decode) {
+            if (err){
+                _data = {
+                    code: -2,
+                    msg:'token验证失效',
+                };
+                resJson(_res, _data)
+            }else {
+                _data = {
+                    code: 200,
+                    msg:'token验证成功',
+                };
+                resJson(_res, _data)
+            }
+        });
+
+        pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
+    })
+});
 module.exports=router;

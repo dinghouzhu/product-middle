@@ -47,7 +47,7 @@ router.post('/login', (req, res) => {
                 let content ={username:req.body.username}; // 要生成token的主题信息
                 let secretOrPrivateKey="dhz"; // 这是加密的key（此处为锁  锁和钥匙同值）
                 let token = jwt.sign(content, secretOrPrivateKey, {
-                    expiresIn: 60*15*1  // 15分钟过期
+                    expiresIn: 60*12*1  // 12分钟过期
                 });
                 _data = {
                     msg: '登录成功',
@@ -163,6 +163,7 @@ router.post('/register', (req, res) => {
         habit:req.body.habit,
         sex:req.body.sex,
         age:req.body.age,
+        IP:req.body.IP,
         level:1                   //默认为1,除管理员外
     };
     let _res = res;
@@ -519,8 +520,6 @@ router.post('/updateUser', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-
-
 /* 间隔验证接口 完成*/
 router.post('/again', (req, res) => {
     let user = {

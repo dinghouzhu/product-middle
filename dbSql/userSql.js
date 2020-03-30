@@ -16,6 +16,8 @@ const userSQL = {
     queryOrderByName:'select * from orders where username=?',  //根据用户名查询订单
     orderInset:'insert into orders set ? ',  // 插入一条订单记录
 
+    loginInset:'insert into loginlog set ?'  //插入一条日志记录
+
 
 };
 

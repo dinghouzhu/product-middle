@@ -16,7 +16,7 @@ app.use(express.static(__dirname + '/static')); //分发静态文件
  * 配置mysql
  */
 const option = {
-    host: 'localhost',
+    host: '122.51.23.240',
     user: 'root',
     password: '123456',
     port: '3306',
@@ -40,7 +40,7 @@ function repool() {
     pool = mysql.createPool({
         ...option,
         waitForConnections: true, //当无连接池可用时，等待（true）还是抛错（false）
-        connectionLimit: 100, //连接数限制
+        connectionLimit: 200, //连接数限制
         queueLimit: 0 //最大连接等待数（0为不限制）
     });
     pool.on('error', err => {

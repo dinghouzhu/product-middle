@@ -16,7 +16,12 @@ const userSQL = {
     queryOrderByName:'select * from orders where username=?',  //根据用户名查询订单
     orderInset:'insert into orders set ? ',  // 插入一条订单记录
 
-    loginInset:'insert into loginlog set ?'  //插入一条日志记录
+    loginInset:'insert into loginlog set ?', //插入一条日志记录
+
+    queryAllMsg:'select * from msg', // 查询所有公告
+    msgInset:'insert into msg set ?', //插入一条公告
+    queryByID: 'select * from  msg where  id=?',  // 通过用id索引查询公告
+    deleteMsg: 'delete from msg where id=?' ,// 删除用户
 
 
 };

@@ -1,4 +1,4 @@
-const { pool, router, resJson } = require('../connect');
+const { pool, router ,resJson} = require('../connect');
 const userSQL = require('../dbSql/userSQL');
 const jwt=require('jsonwebtoken');
 

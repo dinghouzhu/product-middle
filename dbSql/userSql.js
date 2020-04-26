@@ -17,12 +17,19 @@ const userSQL = {
     orderInset:'insert into orders set ? ',  // 插入一条订单记录
 
     loginInset:'insert into loginlog set ?', //插入一条日志记录
+    queryAllLog:'select * from loginlog'  ,   //查询所有日志记录
 
     queryAllMsg:'select * from msg', // 查询所有公告
     msgInset:'insert into msg set ?', //插入一条公告
     queryByID: 'select * from  msg where  id=?',  // 通过用id索引查询公告
     deleteMsg: 'delete from msg where id=?' ,// 删除用户
+    deleteMoreMsg: 'delete from msg where id in ?' ,// 删除用户
 
+    queryAllJur:'select * from jurisdiction', // 查询权限表
+    queryJurByID: 'select * from  jurisdiction  where id=?',  // 通过用id索引查询公告
+    updateJur: 'update jurisdiction set ? where id=?',// 更新项目权限
+
+    queryBlbl:'select * from blbl',//查询哔哩哔哩表
 
 };
 

@@ -5,6 +5,8 @@ const room=require('./router/room');
 const order=require('./router/order');
 const login=require('./router/login');
 const msg=require('./router/msg');
+const jur=require('./router/jurisdiction');
+const blbl=require('./router/blbl');
 const authorizition=require('./utils/authMiddleware');
 
 
@@ -58,6 +60,8 @@ app.use('/room', room);
 app.use('/order', order);
 app.use('/login', login);
 app.use('/msg', msg);
+app.use('/jur', jur);
+app.use('/blbl',blbl);
 
 app.listen(8080, () => {
     console.log('服务启动','localhost:8080')

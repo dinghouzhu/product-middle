@@ -58,5 +58,75 @@ router.post('/loginlog', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
+/*返回日志接口*/
+router.post('/log', (req, res) => {
+    let _res = res;
+    let _data;
+    pool.getConnection((err, conn) => {
+        conn.query(userSQL.queryAllLog, (e, result,filed) => {
+            if (e) _data = {
+                code: -1,
+                msg: e
+            };
+            if (result && result.length) {
+                _data = {
+                    msg: '查询成功',
+                    data: {
+                        res:result
+                    }
+                }
+            }else {
+                _data = {
+                    code: -1,
+                    msg: '查询错误'
+                }
+            }
+            resJson(_res, _data)
+        });
+        pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
+    })
+});
+
+/*日志分页接口*/
+router.post('/limit', (req, res) => {
+    let _res = res;
+    let _data;
+    let current_page = 1; //默认为1  第几页;
+    let pageSize = req.body.pageSize; //一页条数;
+    if (req.body.page) {
+        current_page = parseInt(req.body.page);
+    }
+
+    let last_page = current_page - 1;
+    if (current_page <= 1) {
+        last_page = 1;
+    }
+    let next_page = current_page + 1;
+    let str = 'SELECT left(paragraph,50) as paragraph FROM loginlog limit ' + pageSize + ' offset ' + pageSize * (current_page - 1);
+
+    pool.getConnection((err, conn) => {
+        conn.query(str, (e, result,filed) => {
+            if (e) _data = {
+                code: -1,
+                msg: e
+            };
+            if (result && result.length) {
+                _data = {
+                    msg: '查询成功',
+                    data: {
+                        res:result
+                    }
+                }
+            }else {
+                _data = {
+                    code: -1,
+                    msg: '查询错误'
+                }
+            }
+            resJson(_res, _data)
+        });
+        pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
+    })
+});
 
 module.exports=router;

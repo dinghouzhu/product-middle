@@ -18,6 +18,9 @@ const userSQL = {
 
     loginInset:'insert into loginlog set ?', //插入一条日志记录
     queryAllLog:'select * from loginlog'  ,   //查询所有日志记录
+    limitLog:'select * from loginlog limit 1,5',   //分页查询
+    queryLogById:'select * from  loginlog where id=?', //查询公告单条
+    deleteLog:'delete from loginlog where id=?',   //删除
 
     queryAllMsg:'select * from msg', // 查询所有公告
     msgInset:'insert into msg set ?', //插入一条公告

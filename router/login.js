@@ -58,7 +58,7 @@ router.post('/loginlog', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-/*返回日志接口*/
+/*查询所有日志接口*/
 router.post('/log', (req, res) => {
     let _res = res;
     let _data;
@@ -86,26 +86,22 @@ router.post('/log', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
-
 /*日志分页接口*/
-router.post('/limit', (req, res) => {
+router.post('/limitlog', (req, res) => {
+    //为了方便写死页面展示条数
+    let page=parseInt(req.body.page);
+    if (!page || page ===1) {
+        page = 0;
+    }
+    let pageSize=5;
+    let offset=(page-1)*pageSize;
+    if (page ===0){
+        offset=0
+    }
     let _res = res;
     let _data;
-    let current_page = 1; //默认为1  第几页;
-    let pageSize = req.body.pageSize; //一页条数;
-    if (req.body.page) {
-        current_page = parseInt(req.body.page);
-    }
-
-    let last_page = current_page - 1;
-    if (current_page <= 1) {
-        last_page = 1;
-    }
-    let next_page = current_page + 1;
-    let str = 'SELECT left(paragraph,50) as paragraph FROM loginlog limit ' + pageSize + ' offset ' + pageSize * (current_page - 1);
-
     pool.getConnection((err, conn) => {
-        conn.query(str, (e, result,filed) => {
+        conn.query("select * from loginlog order by id desc limit "+ offset+",5", (e, result,filed) => {
             if (e) _data = {
                 code: -1,
                 msg: e
@@ -128,5 +124,72 @@ router.post('/limit', (req, res) => {
         pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
     })
 });
+/*删除日志接口*/
+router.post('/deleteLog', (req, res) => {
+    // 获取前台页面传过来的参数
+    let user = {
+        id: req.body.id
+    };
+    let _res = res;
+    // 判断参数是否为空
+    if (!user.id) {
+        return resJson(_res, {
+            code: -1,
+            msg: '日志ID不能为空'
+        })
+    }
+    let _data;
+    // 整合参数
+    // 从连接池获取连接
+    pool.getConnection((err, conn) => {
+        // 查询数据库该用户是否已存在
+        let secretOrPrivateKey="dhz"; // 这是加密的key（此处为钥匙  锁和钥匙同值）
+        let token=req.body.token;
+        jwt.verify(token,secretOrPrivateKey,function (err,decode) {
+            if (err){
+                _data = {
+                    code: -2,
+                    msg:'token验证失效',
+                };
+                resJson(_res, _data)
+            }else {
+                conn.query(userSQL.queryLogById, user.id, (e, r) => {
+                    if (e) _data = {
+                        code: -1,
+                        msg: e
+                    };
+                    if (r) {
+                        //判断用户列表是否为空
+                        if (r.length) {
+                            //如不为空，则说明存在此用户
+                            conn.query(userSQL.deleteLog, user.id, (err, result) => {
+                                if (err) _data = {
+                                    code: -1,
+                                    msg: e
+                                };
+                                if (result) {
+                                    _data = {
+                                        code: 200,
+                                        msg: '删除日志操作成功'
+                                    }
+                                }
+                            })
+                        } else {
+                            _data = {
+                                code: -1,
+                                msg: '日志不存在，操作失败'
+                            }
+                        }
+                    }
+                    setTimeout(() => {
+                        //把操作结果返回给前台页面
+                        resJson(_res, _data)
+                    }, 200);
+                });
+            }
+        });
+        pool.releaseConnection(conn) // 释放连接池，等待别的连接使用
+    })
 
+});
 module.exports=router;

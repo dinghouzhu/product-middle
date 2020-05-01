@@ -58,11 +58,12 @@ app.use('/user', user);
 app.use('/hotel', hotel);
 app.use('/room', room);
 app.use('/order', order);
-app.use('/login', login);
+app.use('/log', login);
 app.use('/msg', msg);
 app.use('/jur', jur);
 app.use('/blbl',blbl);
 
-app.listen(8080, () => {
-    console.log('服务启动','localhost:8080')
+const listen=8080;
+app.listen(listen, () => {
+    console.log('服务启动','localhost:',listen)
 });

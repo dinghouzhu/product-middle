@@ -98,7 +98,6 @@ router.post('/insertmsg', (req, res) => {
         })
     });
 });
-
 /*删除单条公告*/
 router.post('/deleteMsg', (req, res) => {
     // 获取前台页面传过来的参数
@@ -167,13 +166,22 @@ router.post('/deleteMsg', (req, res) => {
     })
 
 });
-
-
-router.post('/log', (req, res) => {
+/*公告分页接口*/
+router.post('/limitMsg', (req, res) => {
+    let page=parseInt(req.body.page);
+    if (!page || page ===1) {
+        page = 0;
+    }
+    //为了方便写死页面展示条数
+    let pageSize=5;
+    let offset=(page-1)*pageSize;
+    if (page ===0){
+        offset=0
+    }
     let _res = res;
     let _data;
     pool.getConnection((err, conn) => {
-        conn.query(userSQL.limitLog, (e, result,filed) => {
+        conn.query("select * from msg order by id desc limit "+ offset+","+pageSize, (e, result,filed) => {
             if (e) _data = {
                 code: -1,
                 msg: e

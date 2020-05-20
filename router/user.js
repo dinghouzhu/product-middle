@@ -255,6 +255,12 @@ router.post('/deleteUser', (req, res) => {
             msg: '用户名不能为空'
         })
     }
+    if (user.username == 'dhz' || user.username == 'dhz2') {
+        return resJson(_res, {
+            code: -1,
+            msg: '该用户不能被删除'
+        })
+    }
     let _data;
     // 整合参数
     // 从连接池获取连接

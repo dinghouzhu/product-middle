@@ -88,11 +88,11 @@ router.post('/log', (req, res) => {
 });
 /*日志分页接口*/
 router.post('/limitlog', (req, res) => {
-    //为了方便写死页面展示条数
     let page=parseInt(req.body.page);
     if (!page || page ===1) {
         page = 0;
     }
+    //为了方便写死页面展示条数
     let pageSize=5;
     let offset=(page-1)*pageSize;
     if (page ===0){

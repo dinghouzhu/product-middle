@@ -169,11 +169,12 @@ router.post('/deleteMsg', (req, res) => {
 /*公告分页接口*/
 router.post('/limitMsg', (req, res) => {
     let page=parseInt(req.body.page);
+    let pageSize=parseInt(req.body.pageSize);
     if (!page || page ===1) {
         page = 0;
     }
     //为了方便写死页面展示条数
-    let pageSize=5;
+    //let pageSize=5;
     let offset=(page-1)*pageSize;
     if (page ===0){
         offset=0

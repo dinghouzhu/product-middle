@@ -2,24 +2,17 @@ const mysql = require('mysql');
 const express = require('express');
 const app = express();                 //搭建web服务器
 const router = express.Router();//对应框架中的路由
-
-
-// 解析参数
-const bodyParser = require('body-parser');
-// json请求
-app.use(bodyParser.json());
-// 表单请求
-app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/static')); //分发静态文件
 
 /**
  * 配置mysql
  */
 const option = {
-    host: '122.51.23.240',
+    host: 'localhost',
     user: 'root',
     password: '123456',
     port: '3306',
+    timezone: "08:00", //加八小时
     database: 'aytravel',
     connectTimeout: 5000, //连接超时
     multipleStatements: false //是否允许一个query中包含多条sql语句
@@ -40,7 +33,7 @@ function repool() {
     pool = mysql.createPool({
         ...option,
         waitForConnections: true, //当无连接池可用时，等待（true）还是抛错（false）
-        connectionLimit: 1000, //连接数限制
+        connectionLimit: 100, //连接数限制
         queueLimit: 0 //最大连接等待数（0为不限制）
     });
     pool.on('error', err => {

@@ -70,10 +70,9 @@ router.post('/log', (req, res) => {
             };
             if (result && result.length) {
                 _data = {
+                    code: 0,
                     msg: '查询成功',
-                    data: {
-                        res:result
-                    }
+                    data: result
                 }
             }else {
                 _data = {
@@ -93,7 +92,7 @@ router.post('/limitlog', (req, res) => {
         page = 0;
     }
     //为了方便写死页面展示条数
-    let pageSize=5;
+    let pageSize=10;
     let offset=(page-1)*pageSize;
     if (page ===0){
         offset=0
@@ -108,10 +107,9 @@ router.post('/limitlog', (req, res) => {
             };
             if (result && result.length) {
                 _data = {
+                    code: 0,
                     msg: '查询成功',
-                    data: {
-                        res:result
-                    }
+                    data: result
                 }
             }else {
                 _data = {

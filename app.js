@@ -3,11 +3,20 @@ const user = require('./router/user');
 const hotel=require('./router/hotel');
 const room=require('./router/room');
 const order=require('./router/order');
-const login=require('./router/login');
+const log=require('./router/log');
 const msg=require('./router/msg');
 const jur=require('./router/jurisdiction');
 const blbl=require('./router/blbl');
+const leavmsg=require('./router/leavmsg');
+const link=require('./router/friendlink');
 const authorizition=require('./utils/authMiddleware');
+
+// 解析参数
+const bodyParser = require('body-parser');
+// json请求
+app.use(bodyParser.json());
+// 表单请求
+app.use(bodyParser.urlencoded({extended: true}));
 
 
 
@@ -58,12 +67,13 @@ app.use('/user', user);
 app.use('/hotel', hotel);
 app.use('/room', room);
 app.use('/order', order);
-app.use('/log', login);
+app.use('/log', log);
 app.use('/msg', msg);
 app.use('/jur', jur);
 app.use('/blbl',blbl);
-
-const listen=8080;
+app.use('/leavmsg',leavmsg);
+app.use('/link',link);
+const listen=9000;
 app.listen(listen, () => {
-    console.log('服务启动','localhost:',listen)
+    console.log('服务启动','localhost:'+listen)
 });
